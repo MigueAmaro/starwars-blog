@@ -1,29 +1,37 @@
-const getState = ({ getStore, getActions, setStore }) => {
+const getState = ({ getStore, setStore }) => {
 	return {
 		store: {
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			]
+			URL_BASE: "https://www.swapi.tech/api",
+			category: ["people", "planets", "vehicles"],
+			people: JSON.parse(localStorage.getItem("people")) || [],
+			planets: JSON.parse(localStorage.getItem("planets")) || [],
+			planets: JSON.parse(localStorage.getItem("vehicles")) || [],
+			result: {}
 		},
 		actions: {
-			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
+			getApi: async () => {
+				for (let categories of getStore().category) {
+					try {
+						let response = await fetch(`${getStore().URL_BASE}/${categories}`);
+						let data = await response.json();
+						if (response.ok) {
+							 data.results.map(async (currentPerson) => {
+								let responseDetail = await fetch(`${getStore().URL_BASE}/${categories}/${currentPerson.uid}`);
+								let currentData = await responseDetail.json();
+								setStore({
+									...getStore(),
+									[categories]: [...getStore()[categories], currentData]
+								});
+								localStorage.setItem(categories, JSON.stringify(getStore()[categories]));			
+							});
+						}
+					} catch (error) {
+						console.log(error);
+					}
+
+				}
 			},
-			loadSomeData: () => {
-				/**
-					fetch().then().then(data => setStore({ "foo": data.bar }))
-				*/
-			},
+
 			changeColor: (index, color) => {
 				//get the store
 				const store = getStore();
