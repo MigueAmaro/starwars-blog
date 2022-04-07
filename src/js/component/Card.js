@@ -1,39 +1,67 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import PropTypes from "prop-types";
-import { Link , useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Context } from "../store/appContext.js";
-//set this up when is only a character and not a planet
 
-const Card = props => {
-    
-    const params = useParams();
+const Card = ({ value, nature }) => {
+    const { properties, _id } = value;
     const { store, actions } = useContext(Context);
+    
+
+	const AddFavorites = event => {
+		if (properties.isFavorite) {
+			actions.deleteFavorites(nature, properties);
+		} else {
+			actions.favorites(nature, properties);
+		}
+	};
+
     return (
-        <div className="col-3">
-            <div className="card">
-                <img src={props.image} className="card-img-top" />
-                <div className="card-body">
-                    <h5 className="card-title">Name: {props.value.name}</h5>
-                    <p className="card-text">
-                        {props.category === "people" ? (
-                        <span>
-                            Gender: {`${props.people.gender  && props.people.gender ? props.people.gender : ""}`}
-                            Hair Color: {`${props.people.hair_color}`}
-                            Eye Color: {`${props.people.eye_color}`}
-                            </span>)
-                            : (<span>
-                                Population:{props.value && props.value.population ? props.value.population : ""}
-                                Terrain:{props.value.diameter}
-                            </span>)}
-                    </p>
-
-
-                    <Link
-                        to=""
-                        className="btn btn-primary">
-                        Learn more!
-                    </Link>
-                </div>
+        <div className="card">
+            <img className="card-img-top" src="http://dummyimage.com/400x200" alt="..."
+            />
+            <div className="card-body">
+                <h5 className="card-title">{properties.name}</h5>
+                <div className="card-body">{nature === "people" ? (
+                    <div className="card-body-inside">
+                        <p>
+                            <span>Gender: {properties.gender}</span>
+                        </p>
+                        <p>
+                            <span>Hair Color: {properties.hair_color}</span>
+                        </p>
+                        <p>
+                            <span>Eye Color: {properties.eye_color}</span>
+                        </p>
+                    </div>
+                ) : nature === "planets" ? (
+                    <div className="card-body-inside">
+                        <p>
+                            <span>Population: {properties.population}</span>
+                        </p>
+                        <p>
+                            <span>Terrain: {properties.diameter}</span>
+                        </p>
+                    </div>
+                ) : nature === "vehicles" ? (
+                    <div className="card-body-inside">
+                        <p>
+                            <span>Cargo Capacity: {properties.cargo_capacity}</span>
+                        </p>
+                        <p>
+                            <span>Manufacturer: {properties.manufacturer}</span>
+                        </p>
+                    </div>
+                ) : null} {/* end of IF ELSE JSX */}
+                 <Link className="btn btn-primary me-5" to={"/detail/" + nature + "/" + value.uid}>
+					Learn more!
+				</Link>
+                <button
+					href="#"
+					className={`ms-5 btn far fa-heart ${properties.isFavorite ? "favorites" : ""}`}
+					onClick={AddFavorites}
+				/>
+                </div> {/* cardbody div */}
             </div>
         </div>
     );
@@ -41,10 +69,8 @@ const Card = props => {
 
 Card.propTypes = {
     value: PropTypes.object,
-    index: PropTypes.number,
-    people: PropTypes.array,
-    category: PropTypes.string,
+    index: PropTypes.string,
+    nature: PropTypes.string,
     image: PropTypes.string
 };
-
 export default Card;

@@ -1,3 +1,14 @@
-/* 
-    General Styles
-*/
+.showcase-list{
+    display: flex;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    margin-right:80px;
+    padding: 20px;
+}
+.card{
+    border: 1px solid rgb(197, 197, 197);
+    min-width: 400px;
+    max-width: 400px;
+    border-radius: 6px;
+    margin: 0px 10px 0px 10px;
+} 
